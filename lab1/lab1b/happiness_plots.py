@@ -4,18 +4,35 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def create_plots(data):
+def _create_plot(
+    plot_function, data, show=True, save=False, filename=None
+):
+    plot_function(data)
+    if show:
+        plt.show()
+    if save and filename is not None:
+        plt.savefig(f'images/{filename}')
+
+
+def create_plots(data, show=True, save_to_file=False):
     plt.matshow(data.drop('Overall rank', axis=1).corr())
     plt.colorbar(location='right', shrink=0.8)
     plt.xlabel('Dataset indices')
     plt.ylabel('Dataset indices')
     plt.title('Correlation coefficient between columns')
+    if save_to_file:
+        plt.savefig('images/correlation-matrix.png')
     plt.show()
 
-    _create_line_plot(data)
-    _create_bar_chart(data)
-    _create_heatmap(data)
-    _create_scatter_plot(data)
+    PLOT_TO_FILE_MAP = {
+        _create_line_plot: 'happiness-histogram.png',
+        _create_bar_chart: 'happiness-bar.png',
+        _create_heatmap: 'happiness-heatmap.png',
+        _create_scatter_plot: 'happiness-scatter.png',
+    }
+
+    for plot_function, filename in PLOT_TO_FILE_MAP.items():
+        _create_plot(plot_function, data, show, save_to_file, filename)
 
 
 def _create_line_plot(data):
