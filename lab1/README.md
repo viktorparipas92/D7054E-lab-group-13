@@ -28,9 +28,7 @@ and run MongoDB locally in
 ## Visualization
 The following files generate all the plots:
 - `happiness_plots.py`
-- `covid_visualization_1.py`
-- `covid_visualization_2.py`
-- `covid_visualizatioh_3.py`
+- `covid_plots.py`
 
 
 For the happiness plots, the dataset is fetched through the Kaggle
