@@ -1,73 +1,93 @@
+from bs4 import BeautifulSoup
+import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-
-url = ("https://covid19.who.int/table")
-options = Options()
-options.add_argument('--headless')
-options.add_argument('--disable-gpu')
-
-driver = webdriver.Chrome(chrome_options=options)
-wait = WebDriverWait(driver, 10)
-
-driver.get(url)
-#  To scroll down table in order to get all records - It doesn't work
-for i in range(5):
-    inner_scroll_bar = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "tbody")))
-    # element = driver.find_element_by_id('gatsby-focus-wrapper')
-    scroll_top = 12000
-    driver.execute_script("arguments[0].scrollTop = arguments[1]", inner_scroll_bar)
-    inner_scroll_contents = inner_scroll_bar.text
 
 
-
-# Path for Headers / Totals
-temp_list =[]
-
-elements = driver.find_elements(By.CLASS_NAME, "th")
-
-for item in elements:
-    temp_list.append(item.text)
+WHO_COVID_DATA_URL = 'https://covid19.who.int/table'
 
 
-# Split headers / totals
+def scrape():
+    driver, page_source = get_page_source()
 
-totals_list = []
-totals_list = temp_list[8:]
-headers_list = temp_list[:8]
+    soup = BeautifulSoup(page_source, features='html.parser')
+    column_names = get_column_names(soup)
+    covid_data = pd.DataFrame(columns=column_names)
 
+    column_totals = get_column_totals(soup)
+    covid_data.loc[len(covid_data.index)] = column_totals
 
+    country_rows = get_country_rows(soup)
+    for row in country_rows:
+        values = get_row_values(row)
+        covid_data.loc[len(covid_data.index)] = values
 
-# List for Rows
-
-
-elements = driver.find_elements(By.CLASS_NAME, "td")
-rows_list = []
-
-for item in elements:
-    rows_list.append(item.text)
-
-driver.quit()
-
-# Slice rows list of 160 values, into sublists of 8 values
-sublist_size = 8
-row_list_2 =  [rows_list[i:i+sublist_size] for i in range(0, len(rows_list), sublist_size)]
+    return covid_data
 
 
-
-# turn measures to float from strings
-
-row_list_3 = row_list_2.copy()
-row_list_3 = [[value.replace(",", "") for value in sublist] for sublist in row_list_3]
-for i in range(2,20):
-    for j in range(1,8):
-        if row_list_3[i][j] != "":
-            row_list_3[i][j] = float(row_list_3[i][j])
+def get_row_values(row):
+    columns = row.find_all('div', class_='td')
+    values = [column.find('div').text for column in columns]
+    return parse_row(values)
 
 
+def get_country_rows(soup):
+    totals_header = soup.find('div', {'data-id': 'totals-header'})
+    row_group_inner = totals_header.nextSibling.find('div').find('div')
+    country_rows = row_group_inner.find_all(
+        'div', {'class': 'tr', 'role': 'row'}
+    )[2:]
+    return country_rows
 
-# Create dictionary based on Header - Rows
-covid_dict = [dict(zip(headers_list, row)) for row in row_list_3]
 
+def get_column_names(soup):
+    column_headers = (
+        soup
+        .find('div', class_='thead')
+        .find('div', class_='tr')
+        .find_all('div', class_='th')
+    )
+    column_names = [column_header.text for column_header in column_headers]
+    return column_names
+
+
+def get_column_totals(soup):
+    totals_header = (
+        soup
+        .find('div', {'data-id': 'totals-header'})
+        .find('div', class_='tr')
+        .find_all('div', class_='th')
+    )
+    totals = [total.text for total in totals_header]
+    return parse_row(totals)
+
+
+def parse_row(row):
+    parsed_row = row.copy()
+    parsed_row[1:] = [_parse_string_as_number(value) for value in row[1:]]
+    return parsed_row
+
+
+def _parse_string_as_number(string):
+    string_without_commas = string.replace(',', '')
+    if not string_without_commas:
+        return 0
+    elif '.' in string_without_commas:
+        return float(string_without_commas)
+    else:
+        return int(string_without_commas)
+
+
+def get_page_source():
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--disable-gpu')
+    driver = webdriver.Chrome(options=options)
+    driver.get(WHO_COVID_DATA_URL)
+    page_source = driver.page_source
+    return driver, page_source
+
+
+if __name__ == '__main__':
+    covid_data = scrape()
+    print(covid_data.head())
