@@ -4,6 +4,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 
 def _create_plot(
@@ -43,8 +44,34 @@ def create_plots(data, show=True, save_to_file=False):
 
 
 def _create_line_plot(data):
-    plt.hist(data['Score'], bins=14)
-    plt.hist(data['Generosity'], bins=14)
+    normalized_data = (data - data.mean()) / data.std()
+    plt.figure(figsize=(6, 3))
+    num_bins = 14
+
+    kwargs=dict(bins=num_bins, edgecolor='k', alpha=0.3, density=True, histtype='stepfilled')
+    plt.hist(
+        normalized_data['Score'], label='Total score', **kwargs)
+    plt.hist(
+        normalized_data['GDP per capita'], label='GDP per capita', **kwargs)
+    plt.hist(
+        normalized_data['Social support'], label='Social support', **kwargs)
+    plt.hist(
+        normalized_data['Healthy life expectancy'], label='Health', **kwargs)
+    plt.hist(
+        normalized_data['Freedom to make life choices'], label='Freedom of choice', **kwargs)
+    plt.hist(
+        normalized_data['Generosity'], label='Generosity', **kwargs)
+    plt.hist(
+        normalized_data['Perceptions of corruption'], label='Corruption', **kwargs)
+
+    plt.legend(bbox_to_anchor=[-0.2, 0.5])
+    plt.title('Histogram of all happiness factors')
+    plt.xlabel('Happiness score - normalized')
+    plt.xticks(np.arange(-4, 4.5, 1))
+    plt.yticks(np.arange(0, .7, .1))
+    plt.tight_layout()
+
+    sns.kdeplot(normalized_data['Score'], label='Total score')
 
 
 def _create_bar_chart(data):
