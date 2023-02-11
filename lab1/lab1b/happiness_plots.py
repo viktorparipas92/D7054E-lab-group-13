@@ -1,5 +1,7 @@
 from happiness_api import fetch_data
 
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -8,10 +10,12 @@ def _create_plot(
     plot_function, data, show=True, save=False, filename=None
 ):
     plot_function(data)
+    if save and filename is not None:
+        if os.path.isfile(filename):
+            os.remove(filename)
+        plt.savefig(f'images/{filename}')
     if show:
         plt.show()
-    if save and filename is not None:
-        plt.savefig(f'images/{filename}')
 
 
 def create_plots(data, show=True, save_to_file=False):
@@ -21,7 +25,10 @@ def create_plots(data, show=True, save_to_file=False):
     plt.ylabel('Dataset indices')
     plt.title('Correlation coefficient between columns')
     if save_to_file:
-        plt.savefig('images/correlation-matrix.png')
+        filename = 'images/correlation-matrix.png'
+        if os.path.isfile(filename):
+            os.remove(filename)
+        plt.savefig(filename)
     plt.show()
 
     PLOT_TO_FILE_MAP = {
@@ -38,7 +45,6 @@ def create_plots(data, show=True, save_to_file=False):
 def _create_line_plot(data):
     plt.hist(data['Score'], bins=14)
     plt.hist(data['Generosity'], bins=14)
-    plt.show()
 
 
 def _create_bar_chart(data):
@@ -85,7 +91,6 @@ def _create_bar_chart(data):
     )
     plt.xticks(rotation=60)
     plt.legend(loc='right')
-    plt.show()
 
 
 def _create_heatmap(data):
@@ -98,7 +103,6 @@ def _create_heatmap(data):
     plt.ylabel('Happiness as explained by GDP per capita')
     plt.title('2D histogram of countries')
     plt.colorbar()
-    plt.show()
 
 
 def _create_scatter_plot(data):
@@ -141,5 +145,5 @@ def _create_scatter_plot(data):
 
 if __name__ == '__main__':
     happiness_data = fetch_data()
-    create_plots(happiness_data)
+    create_plots(happiness_data, save_to_file=True)
     plt.show()
