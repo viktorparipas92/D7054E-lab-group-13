@@ -48,13 +48,13 @@ bar_positions = range(len(mortality_rate_cumulative))
 
 # Create a grouped bar chart
 fig, ax = plt.subplots()
-rects1 = ax.bar(bar_positions, mortality_rate_week, bar_width, color='b', label='Mortality rate last week')
-rects2 = ax.bar([p + bar_width for p in bar_positions], mortality_rate_cumulative, bar_width, color='orange', label='Mortality rate cumulative')
+rects1 = ax.bar(bar_positions, mortality_rate_week, bar_width, color='b', label='Infection Fatality Rate last week')
+rects2 = ax.bar([p + bar_width for p in bar_positions], mortality_rate_cumulative, bar_width, color='orange', label='Infection Fatality Rate cumulative')
 
 # Add x-axis and y-axis labels and title
 ax.set_xlabel('Country')
-ax.set_ylabel('Mortality rate (%)')
-ax.set_title('Comparison of mortality rates by country')
+ax.set_ylabel('Infection Fatality Rate (%)')
+ax.set_title('Comparison of Infection Fatality Rates by country')
 
 # Add x-axis tick labels
 ax.set_xticks([p + bar_width / 2 for p in bar_positions])
