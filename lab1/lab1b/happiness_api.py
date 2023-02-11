@@ -10,7 +10,7 @@ from kaggle_api import (
 DATASET_OWNER = 'mathurinache'
 DATASET_NAME = 'world-happiness-report'
 
-KAGGLE_DATASET_LIST_URL = (
+KAGGLE_DATASET_LIST_FILES_URL = (
     f"{KAGGLE_API_ROOT}datasets/list/{DATASET_OWNER}/{DATASET_NAME}"
 )
 
@@ -23,12 +23,16 @@ def find_filename_for_year(dataset_files_list, year):
     return None
 
 
-if __name__ == '__main__':
-    happiness_dataset = get_from_kaggle_api(KAGGLE_DATASET_LIST_URL)
+def fetch_data():
+    happiness_dataset = get_from_kaggle_api(KAGGLE_DATASET_LIST_FILES_URL)
     filename_2019 = find_filename_for_year(happiness_dataset, 2019)
     download_url_2019 = get_file_download_url(
-        DATASET_OWNER, DATASET_NAME, filename_2019)
+        DATASET_OWNER, DATASET_NAME, filename_2019
+    )
     happiness_2019_data = get_from_kaggle_api(download_url_2019, as_dict=False)
     happiness_2019_dataframe = pandas.read_csv(StringIO(happiness_2019_data))
-    print(happiness_2019_dataframe)
+    return happiness_2019_dataframe
 
+
+if __name__ == '__main__':
+    fetch_data()
