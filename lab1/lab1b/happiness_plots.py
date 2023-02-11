@@ -76,7 +76,8 @@ def _create_line_plot(data):
 
 def _create_bar_chart(data):
     n = num_countries_to_show = 10
-    plt.subplots()
+    # plt.subplots()
+    plt.figure(figsize=(6, 3.5))
     happiest_countries = data['Country or region'][:n]
     gdp = data['GDP per capita'][:n]
     ss = data['Social support'][:n]
@@ -117,7 +118,9 @@ def _create_bar_chart(data):
         alpha=0.2,
     )
     plt.xticks(rotation=60)
-    plt.legend(loc='right')
+    plt.ylabel('Happiness score')
+    plt.legend(bbox_to_anchor=[1.0, 0.9], prop={'size': 6})
+    plt.tight_layout()
 
 
 def _create_heatmap(data):

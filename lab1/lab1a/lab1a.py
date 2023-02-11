@@ -101,7 +101,7 @@ class CSVLoader:
 class Data:
     mapping = {}
 
-    def from_csv_row(self, csv_row):
+    def from_csv_row(self, csv_row: dict):
         mapping = {v: k for k, v in self.mapping.items()}
         for column_name, value in csv_row.items():
             dataclass_field = mapping.get(column_name)
