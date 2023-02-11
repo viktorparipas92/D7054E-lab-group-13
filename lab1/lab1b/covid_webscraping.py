@@ -5,8 +5,10 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
 
 
+WHO_COVID_DATA_URL = 'https://covid19.who.int/table'
+
+
 def scrape():
-    url = "https://covid19.who.int/table"
     options = Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
@@ -14,7 +16,7 @@ def scrape():
     driver = webdriver.Chrome(chrome_options=options)
     wait = WebDriverWait(driver, 10)
 
-    driver.get(url)
+    driver.get(WHO_COVID_DATA_URL)
     #  To scroll down table in order to get all records - It doesn't work
     for i in range(5):
         inner_scroll_bar = wait.until(
@@ -41,14 +43,11 @@ def scrape():
 
     # List for Rows
     elements = driver.find_elements(By.CLASS_NAME, "td")
-    rows_list = []
-
-    for item in elements:
-        rows_list.append(item.text)
+    rows_list = [item.text for item in elements]
 
     driver.quit()
 
-    # Slice rows list of 160 values, into sublists of 8 values
+    # Slice rows list of 160 values, into sub-lists of 8 values
     sublist_size = 8
     row_list_2 = [
         rows_list[i:i + sublist_size]
