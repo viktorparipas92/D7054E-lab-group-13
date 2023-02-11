@@ -42,7 +42,7 @@ percentage = [float(key)  for key in percentage]
 cmap = plt.cm.get_cmap('RdYlGn')
 cmap_reversed = cmap.reversed()
 # plt.scatter(x, y, s=z, c=colors, alpha=0.5,label='Boosted / Fully Vaccinated Percentage ')
-plt.scatter(x, y,s = 500, c=percentage,cmap =  cmap_reversed, alpha=0.5,label='Color - Mortality Rate')
+plt.scatter(x, y,s = 500, c=percentage,cmap =  cmap_reversed, alpha=0.5,label='Color - Infection Fatality Rate')
 
 # plt.scatter(x, y)
 plt.xlim(0, 100)  # set x-axis limits
