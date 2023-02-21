@@ -138,7 +138,7 @@ def describe(data):
     percentile_15 = np.quantile(data, 0.15)
     percentile_85 = np.quantile(data, 0.85)
     print(
-        f"The 15-th and 85-th percentile are "
+        f"The 15th and 85th percentile are "
         f"{percentile_15} and {percentile_85}, respectively."
     )
 
