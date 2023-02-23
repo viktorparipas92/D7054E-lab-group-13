@@ -14,7 +14,7 @@ class CookieRecipeScraper(WebScraper):
         cookie_recipes = pd.DataFrame(columns=column_names)
         self.data = cookie_recipes
 
-        rows = get_rows(table)
+        rows = self.get_rows()
         for row in rows:
             values = [column.text for column in row.find_all('td')]
             parsed_split_rows = self._parse_recipe_row(values)
@@ -46,10 +46,9 @@ class CookieRecipeScraper(WebScraper):
         column_names = [column_header.text for column_header in column_headers]
         return column_names
 
-
-def get_rows(table):
-    rows = table.find('tbody').find_all('tr')
-    return rows
+    def get_rows(self):
+        rows = self.table.find('tbody').find_all('tr')
+        return rows
 
 
 if __name__ == '__main__':
