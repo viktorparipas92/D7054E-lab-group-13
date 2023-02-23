@@ -4,77 +4,53 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import seaborn as sns
 from scipy.stats import norm
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 
+from scraping.scrape import get_page_source, parse_row, WebScraper
 
 LAP_TIMES_URL = 'https://openstax.org/books/introductory-statistics/pages/c-data-sets'
 
 
-def scrape():
-    driver, page_source = get_page_source()
+class LapTimeScraper(WebScraper):
+    def get_table(self):
+        return (
+            self.soup
+            .find('div', {'data-type': 'page'})
+            .find('h2', string='Lap Times')
+            .parent
+            .find('div')
+            .find('table')
+        )
 
-    soup = BeautifulSoup(page_source, features='html.parser')
-    table = get_table(soup)
-    column_names = get_column_names(table)
-    lap_times = pd.DataFrame(columns=column_names)
+    def _set_table(self, table):
+        self.table = table
 
-    rows = get_rows(table)
-    for row in rows:
-        values = [column.text for column in row.find_all('td')]
-        parsed_values = parse_row(values)
-        lap_times.loc[len(lap_times.index)] = parsed_values[1:]
+    def get_column_names(self):
+        column_headers = self.table.find('thead').find('tr').find_all('th')
+        column_names = [column_header.text for column_header in
+                        column_headers[1:]]
+        return column_names
 
-    indices = [row.find('td').text for row in rows]
-    lap_times.index = indices
-    return lap_times
+    def get_rows(self):
+        rows = self.table.find('tbody').find_all('tr')
+        return rows
 
+    def scrape(self):
+        table = self.get_table()
+        self._set_table(table)
 
-def get_table(soup):
-    return (
-        soup.find('div', {'data-type': 'page'})
-        .find('h2', string='Lap Times')
-        .parent
-        .find('div')
-        .find('table')
-    )
+        column_names = self.get_column_names()
+        lap_times = pd.DataFrame(columns=column_names)
 
+        rows = self.get_rows()
+        for row in rows:
+            values = [column.text for column in row.find_all('td')]
+            parsed_values = parse_row(values)
+            lap_times.loc[len(lap_times.index)] = parsed_values[1:]
 
-def get_rows(table):
-    rows = table.find('tbody').find_all('tr')
-    return rows
+        indices = [row.find('td').text for row in rows]
+        lap_times.index = indices
 
-
-def get_column_names(table):
-    column_headers = table.find('thead').find('tr').find_all('th')
-    column_names = [column_header.text for column_header in column_headers[1:]]
-    return column_names
-
-
-def parse_row(row):
-    parsed_row = row.copy()
-    parsed_row[1:] = [_parse_string_as_number(value) for value in row[1:]]
-    return parsed_row
-
-
-def _parse_string_as_number(string):
-    string_without_commas = string.replace(',', '')
-    if not string_without_commas:
-        return 0
-    elif '.' in string_without_commas:
-        return float(string_without_commas)
-    else:
-        return int(string_without_commas)
-
-
-def get_page_source():
-    options = Options()
-    options.add_argument('--headless')
-    options.add_argument('--disable-gpu')
-    driver = webdriver.Chrome(options=options)
-    driver.get(LAP_TIMES_URL)
-    page_source = driver.page_source
-    return driver, page_source
+        self.data = lap_times
 
 
 def sample(data, laps_per_race=6):
@@ -104,7 +80,12 @@ def plot_distribution(data):
 
 
 def collect():
-    lap_times = scrape()
+    driver, page_source = get_page_source(LAP_TIMES_URL)
+    soup = BeautifulSoup(page_source, features='html.parser')
+    scraper = LapTimeScraper(soup)
+    scraper.scrape()
+    lap_times = scraper.data
+
     sample_lap_times = sample(lap_times)
     # samples_from_laps_2_to_7 = sample_lap_times[6:42]
     plot_histogram(sample_lap_times)
