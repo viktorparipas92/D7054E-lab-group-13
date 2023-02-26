@@ -6,6 +6,7 @@ import seaborn as sns
 from scipy.stats import norm
 
 from scraping.scrape import get_page_source, parse_row, WebScraper
+from plot import create_plots
 
 LAP_TIMES_URL = 'https://openstax.org/books/introductory-statistics/pages/c-data-sets'
 
@@ -62,7 +63,7 @@ def sample(data, laps_per_race=6):
     return all_sampled_laps
 
 
-def plot_histogram(data):
+def _plot_histogram(data):
     plt.hist(data, bins=6)
     plt.xlabel('Time [s]')
     plt.ylabel('Occurrence')
@@ -70,7 +71,7 @@ def plot_histogram(data):
     plt.show()
 
 
-def plot_distribution(data):
+def _plot_distribution(data):
     sns.distplot(data)
     plt.xlabel('Time [s]')
     plt.ylabel('Density')
@@ -88,12 +89,10 @@ def collect():
 
     sample_lap_times = sample(lap_times)
     # samples_from_laps_2_to_7 = sample_lap_times[6:42]
-    plot_histogram(sample_lap_times)
     mean = sample_lap_times.mean()
     std = sample_lap_times.std()
     print(f"The mean lap time is {mean:.2f}")
     print(f"The standard deviation of lap times is {std:.2f}")
-    plot_distribution(sample_lap_times)
     return lap_times, sample_lap_times, mean, std
 
 
@@ -172,11 +171,18 @@ def theoretical(mean, std):
     )
 
 
+PLOT_TO_FILE_MAP = {
+    _plot_histogram: 'normal-histogram.png',
+    _plot_distribution: 'normal-distplot.png',
+}
+
+
 if __name__ == '__main__':
     lap_times, sample_lap_times, mean, std = collect()
     analyze(mean, std)
     describe(sample_lap_times)
     theoretical(mean, std)
+    create_plots(sample_lap_times, PLOT_TO_FILE_MAP, save_to_file=True)
 
 
 

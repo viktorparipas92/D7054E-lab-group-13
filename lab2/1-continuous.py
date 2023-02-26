@@ -1,9 +1,8 @@
-import os
-
 import numpy as np
 from numpy.random import rand, seed
 import matplotlib.pyplot as plt
 
+from plot import create_plots
 
 SIZE = 50
 
@@ -24,28 +23,6 @@ def collect(size=SIZE):
         f"The median is {median:.4f}\n"
     )
     return random_values
-
-
-def _create_plot(
-    plot_function, data, show=True, save=False, filename=None
-):
-    plot_function(data)
-    if save and filename is not None:
-        if os.path.isfile(filename):
-            os.remove(filename)
-        plt.savefig(f'images/{filename}')
-    if show:
-        plt.show()
-
-
-def create_plots(data, show=True, save_to_file=False):
-    PLOT_TO_FILE_MAP = {
-        _plot_histogram_with_8_bins: 'histogram-8-bin.png',
-        _plot_histogram_with_5_bins: 'histogram-5-bin.png',
-        _create_boxplot: 'boxplot.png',
-    }
-    for plot_function, filename in PLOT_TO_FILE_MAP.items():
-        _create_plot(plot_function, data, show, save_to_file, filename)
 
 
 def _plot_histogram_with_n_bins(data, n):
@@ -131,6 +108,13 @@ def compare(data):
     )
 
 
+PLOT_TO_FILE_MAP = {
+    _plot_histogram_with_8_bins: 'histogram-8-bin.png',
+    _plot_histogram_with_5_bins: 'histogram-5-bin.png',
+    _create_boxplot: 'boxplot.png',
+}
+
+
 if __name__ == '__main__':
     seed(42)
     np.set_printoptions(
@@ -143,4 +127,4 @@ if __name__ == '__main__':
     describe_theoretical()
     boxplot_outliers(data)
     compare(data)
-    create_plots(data, save_to_file=True)
+    create_plots(data, PLOT_TO_FILE_MAP, save_to_file=True)
