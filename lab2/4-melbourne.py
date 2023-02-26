@@ -82,11 +82,36 @@ def _plot_properties_by_council_and_year_built(melbourne_data):
     plt.title('Number of Properties Built by Year and Council (Top 10)')
 
 
+def _plot_seller_location(melbourne_data):
+    top_sellers = (
+        melbourne_data['SellerG'].value_counts()
+        .nlargest(5)
+        .index
+        .tolist()
+    )
+    seller_data = melbourne_data[melbourne_data['SellerG'].isin(top_sellers)]
+
+    plt.figure(figsize=(10, 8))
+    for top_seller in top_sellers:
+        seller_subset = seller_data[seller_data['SellerG'] == top_seller]
+        plt.scatter(
+            seller_subset['Longtitude'],
+            seller_subset['Latitude'],
+            alpha=0.5, label=top_seller, cmap='viridis',
+        )
+
+    plt.xlabel('Longitude')
+    plt.ylabel('Latitude')
+    plt.title('Properties Sold by Top 5 Sellers')
+    plt.legend()
+
+
 PLOT_TO_FILE_MAP = {
     _plot_relationship_between_distance_and_price: 'melbourne-corr-distance.png',
     _plot_property_counts_by_suburb: 'melbourne-properties-per-suburb.png',
     _plot_relationship_between_price_and_size: 'melbourne-scatter-size.png',
     _plot_properties_by_council_and_year_built: 'melbourne-scatter-yearbuilt.png',
+    _plot_seller_location: 'melbourne-seller-location.png',
 }
 
 
