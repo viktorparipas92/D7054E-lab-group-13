@@ -68,7 +68,6 @@ def _plot_histogram(data):
     plt.xlabel('Time [s]')
     plt.ylabel('Occurrence')
     plt.title('Histogram of lap times')
-    plt.show()
 
 
 def _plot_distribution(data):
@@ -76,7 +75,6 @@ def _plot_distribution(data):
     plt.xlabel('Time [s]')
     plt.ylabel('Density')
     plt.title('Density plot of lap times')
-    plt.show()
     print("The graph has a bell shape.")
 
 
