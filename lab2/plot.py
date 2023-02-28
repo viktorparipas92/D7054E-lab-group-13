@@ -4,9 +4,9 @@ from matplotlib import pyplot as plt
 
 
 def create_plot(
-    plot_function, data, show=True, save=False, filename=None
+    plot_function, data, show=True, save=False, filename=None, **kwargs
 ):
-    plot_function(data)
+    plot_function(data, **kwargs)
     if save and filename is not None:
         if os.path.isfile(filename):
             os.remove(filename)
