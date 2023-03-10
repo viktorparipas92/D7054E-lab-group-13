@@ -18,21 +18,20 @@ def create_model(features, labels):
 
     naive_bayes_model = GaussianNB()
     naive_bayes_model.fit(features_train, labels_train)
-
-    pred_labels = naive_bayes_model.predict(features_test)
-
-    return labels_test, pred_labels
+    predicted_labels = naive_bayes_model.predict(features_test)
+    return labels_test, predicted_labels
 
 
-def get_metrics(labels_test, pred_labels):
-    cm = metrics.confusion_matrix(labels_test, pred_labels)
-    print(cm)
+def plot_metrics(labels_test, pred_labels):
+    confusion_matrix = metrics.confusion_matrix(labels_test, pred_labels)
+    print(confusion_matrix)
 
     report = classification_report(labels_test, pred_labels)
     print(report)
 
     sns.heatmap(
-        cm, annot=True, cmap='YlGnBu', fmt='g', annot_kws={"fontsize": 18}
+        confusion_matrix,
+        annot=True, cmap='YlGnBu', fmt='g', annot_kws={"fontsize": 18}
     )
 
     plt.xlabel('Predicted label', fontsize=20)
@@ -44,7 +43,7 @@ def get_metrics(labels_test, pred_labels):
 
 
 def learn_curve(features, labels):
-    # Compute the learning curve scores
+    """Compute the learning curve scores"""
     train_sizes, train_scores, test_scores = learning_curve(
         GaussianNB(),
         features,
@@ -106,5 +105,5 @@ if __name__ == '__main__':
     wine_labels_test, predicted_labels = create_model(
         wine_features, wine_labels
     )
-    get_metrics(wine_labels_test, predicted_labels)
+    plot_metrics(wine_labels_test, predicted_labels)
     learn_curve(wine_features, wine_labels)
