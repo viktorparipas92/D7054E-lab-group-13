@@ -86,6 +86,93 @@ def create_plots(data):
     plt.show()
 
 
+########################
+
+    plt.figure(figsize=(20,6))
+
+    sns.kdeplot(x=attrition_df.loc[attrition_df['Attrition'] == 'No', 'Age'], label = 'Active Employee', color="g")
+    sns.kdeplot(x=attrition_df.loc[attrition_df['Attrition'] == 'Yes', 'Age'], label = 'Active Employee', color="b")
+    plt.xlim(left=18, right=60)
+    plt.legend(["Stay","Left"])
+    plt.show()
+
+
+########################
+
+
+    # Create two dataframes for attrition yes and no
+    attrition_yes_df = attrition_df[attrition_df['Attrition'] == 'Yes']
+    attrition_no_df = attrition_df[attrition_df['Attrition'] == 'No']
+
+    # Define a dictionary to map the job satisfaction levels to their values
+    job_satisfaction_dict = {
+        1: 'Low',
+        2: 'Medium',
+        3: 'High',
+        4: 'Very High'
+    }
+
+    job_satisfaction_colors = {
+        'Low': 'red',
+        'Medium': 'orange',
+        'High': 'blue',
+        'Very High': 'green'
+    }
+
+    # Replace the job satisfaction levels with their values in both dataframes
+    attrition_df['JobSatisfaction'] = attrition_df['JobSatisfaction'].replace(job_satisfaction_dict)
+    attrition_yes_df['JobSatisfaction'] = attrition_yes_df['JobSatisfaction'].replace(job_satisfaction_dict)
+    attrition_no_df['JobSatisfaction'] = attrition_no_df['JobSatisfaction'].replace(job_satisfaction_dict)
+
+    # Create a pie chart for attrition yes and job satisfaction with colors
+    attrition_yes_job_satisfaction = attrition_yes_df['JobSatisfaction'].value_counts()
+    plt.pie(attrition_yes_job_satisfaction,
+            labels=attrition_yes_job_satisfaction.index,
+            colors=[job_satisfaction_colors[x] for x in attrition_yes_job_satisfaction.index],
+            autopct='%1.1f%%')
+    plt.title('Attrition Yes: Job Satisfaction')
+    plt.show()
+
+    # Create a pie chart for attrition no and job satisfaction with colors
+    attrition_no_job_satisfaction = attrition_no_df['JobSatisfaction'].value_counts()
+    plt.pie(attrition_no_job_satisfaction,
+            labels=attrition_no_job_satisfaction.index,
+            colors=[job_satisfaction_colors[x] for x in attrition_no_job_satisfaction.index],
+            autopct='%1.1f%%')
+    plt.title('Attrition No: Job Satisfaction')
+    plt.show()
+
+
+########################
+    # Define a dictionary to map the job satisfaction levels to their values
+    education_dict = {
+        1: 'Below College',
+        2: 'College',
+        3: 'Bachelor',
+        4: 'Master',
+        5: 'Doctor'
+    }
+    attrition_df['Education'] = attrition_df['Education'].replace(education_dict)
+
+    # Group the data by education field and attrition status
+    edu_attrition_counts = attrition_df.groupby(['Education', 'Attrition']).size().unstack()
+
+    # Create a bar chart
+    edu_attrition_counts.plot(kind='bar', stacked=True, color=['#4c78a8', '#f58518'])
+
+    # Set the labels and title
+    plt.xlabel('Education Level')
+    plt.ylabel('Count')
+    plt.title('Employee Attrition by Educational Level')
+    plt.xticks(rotation=0)
+
+    # Show the plot
+    plt.show()
+
+########################
+    sns.countplot(x='BusinessTravel', palette="Set3", hue='Attrition', data=attrition_df);
+    plt.show()
+
 
 if __name__ == '__main__':
     attrition_df = fetch_data()
