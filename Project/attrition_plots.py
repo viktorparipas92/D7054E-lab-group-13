@@ -31,22 +31,38 @@ def create_plots(data):
     # Create a scatter plot of employee tenure vs attrition rate
     plt.scatter(attrition_df['YearsAtCompany'], attrition_df['Attrition'])
     plt.title('Employee Tenure vs Attrition Rate')
-    plt.xlabel('YearsatCompany')
-    plt.ylabel('Attrition')
+    plt.xlabel('YearsatCompany',fontsize=16)
+    plt.ylabel('Attrition',fontsize=16)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
     plt.show()
 
 ########################
 
-    plt.hist(attrition_df['Age'], bins=30)
-    plt.xlabel('Age')
-    plt.ylabel('Count')
-    plt.title('Age Distribution')
+    # Separate the age data by attrition status
+    attrition_yes = attrition_df[attrition_df['Attrition'] == 'Yes']['Age']
+    attrition_no = attrition_df[attrition_df['Attrition'] == 'No']['Age']
+
+    # Create a histogram with two sets of bars
+    plt.hist([attrition_yes, attrition_no], bins=30, color=['red', 'blue'], label=['Attrition: Yes', 'Attrition: No'])
+
+    # Add axis labels and title
+    plt.xlabel('Age', fontsize=16)
+    plt.ylabel('Count', fontsize=16)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.title('Age Distribution by Attrition Status')
+
+    # Add a legend and show the plot
+    plt.legend()
     plt.show()
 
 ########################
 
-    sns.violinplot(x='Attrition', y='YearsAtCompany', hue='Gender', data=attrition_df, split=True)
+    sns.violinplot(x='Attrition', y='YearsAtCompany',fontsize=16, hue='Gender', data=attrition_df, split=True)
     plt.title('Years at Company Distribution by Attrition and Gender')
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
     plt.show()
 
 ########################
@@ -57,13 +73,15 @@ def create_plots(data):
         ['YearsAtCompany', 'TotalWorkingYears', 'YearsSinceLastPromotion']].mean()
 
     # Create a stacked bar chart
-    plt.bar(attrition_means.columns, attrition_means.loc["Yes"], label="Yes")
-    plt.bar(attrition_means.columns, attrition_means.loc["No"], bottom=attrition_means.loc["Yes"], label="No")
+    plt.bar(attrition_means.columns, attrition_means.loc["No"], label="No")
+    plt.bar(attrition_means.columns, attrition_means.loc["Yes"], bottom=attrition_means.loc["No"], label="Yes")
 
     plt.title('Attrition')
     plt.xlabel('Variable')
     plt.ylabel('Average in Years')
     plt.legend()
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
 
     plt.show()
 
@@ -78,9 +96,9 @@ def create_plots(data):
     crosstab_df.plot.bar(stacked=True)
 
     # Set the title and axis labels
-    plt.title('Attrition by Overtime')
-    plt.xlabel('Attrition')
-    plt.ylabel('Employee Count')
+    plt.title('Attrition by Overtime',fontsize=16)
+    plt.xlabel('Attrition',fontsize=16)
+    plt.ylabel('Employee Count',fontsize=16)
 
     # Show the plot
     plt.show()
@@ -170,7 +188,7 @@ def create_plots(data):
     plt.show()
 
 ########################
-    sns.countplot(x='BusinessTravel', palette="Set3", hue='Attrition', data=attrition_df);
+    sns.countplot(x='BusinessTravel', palette="Set3", hue='Attrition', data=attrition_df)
     plt.show()
 
 
