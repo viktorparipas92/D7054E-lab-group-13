@@ -1,6 +1,7 @@
+import json
 import requests
 from requests.auth import HTTPBasicAuth
-import json
+
 
 def get(url, user=None, password=None):
     if user is not None and password is not None:
