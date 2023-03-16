@@ -21,7 +21,7 @@ def find_latest_filename(dataset_files_list):
 
 def fetch_data():
     attrition_dataset = get_from_kaggle_api(KAGGLE_DATASET_LIST_URL)
-    latest_attrition_data_filename = find_latest_filename(attrition_dataset )
+    latest_attrition_data_filename = find_latest_filename(attrition_dataset)
     download_url = get_file_download_url(
         DATASET_OWNER, DATASET_NAME, latest_attrition_data_filename
     )
@@ -32,4 +32,3 @@ def fetch_data():
 
 if __name__ == '__main__':
     fetch_data()
-
