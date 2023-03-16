@@ -25,9 +25,9 @@ def fetch_data():
     download_url = get_file_download_url(
         DATASET_OWNER, DATASET_NAME, latest_attrition_data_filename
     )
-    covid_data = get_from_kaggle_api(download_url, as_dict=False)
-    covid_dataframe = pandas.read_csv(StringIO(covid_data))
-    return covid_dataframe
+    attrition_data = get_from_kaggle_api(download_url, as_dict=False)
+    attrition_dataframe = pandas.read_csv(StringIO(attrition_data))
+    return attrition_dataframe
 
 
 if __name__ == '__main__':
