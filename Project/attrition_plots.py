@@ -39,7 +39,6 @@ def create_violinplot(data):
 
 
 def create_stacked_bar_average_years(data):
-
     attrition_means = data.groupby('Attrition')[
         ['YearsAtCompany', 'TotalWorkingYears', 'YearsSinceLastPromotion']
     ].mean()
@@ -163,7 +162,7 @@ def create_plot_business_travel(data):
     sns.set(font_scale=1.5)
     sns.countplot(
         x='BusinessTravel',
-        palette="Set2",
+        palette='Set2',
         hue='Attrition',
         data=data,
         order=['Non-Travel', 'Travel_Rarely', 'Travel_Frequently']

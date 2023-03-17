@@ -10,7 +10,7 @@ def get(url, user=None, password=None):
     else:
         response = requests.get(url)
     if response.status_code != 200:
-        raise Exception("Not OK request")
+        raise Exception('Not OK request')
     else:
         return response
 
@@ -25,7 +25,7 @@ def get_raw_text(url, user=None, password=None):
     return response.text
 
 
-KAGGLE_API_ROOT = "https://www.kaggle.com/api/v1/"
+KAGGLE_API_ROOT = 'https://www.kaggle.com/api/v1/'
 
 KAGGLE_USERNAME = 'viktorparipas'
 KAGGLE_API_TOKEN = '7669a17cf215d73573d5e99c9b5334ae'
