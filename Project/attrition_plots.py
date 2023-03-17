@@ -3,6 +3,9 @@ import seaborn as sns
 import pandas as pd
 
 
+FONT_SIZE = 16
+
+
 def create_hist_age_distribution(data):
     attrition_yes = data[data['Attrition'] == 'Yes']['Age']
     attrition_no = data[data['Attrition'] == 'No']['Age']
@@ -12,10 +15,10 @@ def create_hist_age_distribution(data):
         color=['red', 'blue'],
         label=['Attrition: Yes', 'Attrition: No'],
     )
-    plt.xlabel('Age', fontsize=16)
-    plt.ylabel('Count', fontsize=16)
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
+    plt.xlabel('Age', fontsize=FONT_SIZE)
+    plt.ylabel('Count', fontsize=FONT_SIZE)
+    plt.xticks(fontsize=FONT_SIZE)
+    plt.yticks(fontsize=FONT_SIZE)
     plt.title('Age Distribution by Attrition Status')
     plt.legend()
     plt.show()
@@ -25,16 +28,16 @@ def create_violinplot(data):
     sns.violinplot(
         x='Attrition',
         y='YearsAtCompany',
-        fontsize=16,
+        fontsize=FONT_SIZE,
         hue='Gender',
         data=data,
         split=True,
     )
     plt.title('Years at Company Distribution by Attrition and Gender')
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
+    plt.xticks(fontsize=FONT_SIZE)
+    plt.yticks(fontsize=FONT_SIZE)
+    plt.xticks(fontsize=FONT_SIZE)
+    plt.yticks(fontsize=FONT_SIZE)
     plt.show()
 
 
@@ -52,20 +55,20 @@ def create_stacked_bar_average_years(data):
     plt.title('Attrition')
     plt.xlabel('Variable')
     plt.ylabel('Average in Years')
-    plt.legend(fontsize=16)
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
+    plt.legend(fontsize=FONT_SIZE)
+    plt.xticks(fontsize=FONT_SIZE)
+    plt.yticks(fontsize=FONT_SIZE)
     plt.show()
 
 
 def create_bar_overtime(data):
     crosstab_df = pd.crosstab(data['Attrition'], data['OverTime'])
     crosstab_df.plot.bar(stacked=True)
-    plt.title('Attrition by Overtime', fontsize=16)
-    plt.xlabel('Attrition', fontsize=16)
-    plt.ylabel('Employee Count', fontsize=16)
-    plt.legend(fontsize=16)
-    plt.xticks(rotation=0, fontsize=16)
+    plt.title('Attrition by Overtime', fontsize=FONT_SIZE)
+    plt.xlabel('Attrition', fontsize=FONT_SIZE)
+    plt.ylabel('Employee Count', fontsize=FONT_SIZE)
+    plt.legend(fontsize=FONT_SIZE)
+    plt.xticks(rotation=0, fontsize=FONT_SIZE)
     plt.show()
 
 
@@ -107,7 +110,7 @@ def create_pie_charts(data):
             for x in attrition_yes_job_satisfaction.index
         ],
         autopct='%1.1f%%',
-        textprops={'fontsize': 16},
+        textprops={'fontsize': FONT_SIZE},
     )
     plt.title('Attrition Yes: Job Satisfaction')
     plt.show()
@@ -122,39 +125,42 @@ def create_pie_charts(data):
             for x in attrition_no_job_satisfaction.index
         ],
         autopct='%1.1f%%',
-        textprops={'fontsize': 16})
+        textprops={'fontsize': FONT_SIZE})
     plt.title('Attrition No: Job Satisfaction')
     plt.show()
 
 
-def create_bar_education_level(data):
-    education_dict = {
+def create_bar_education_level(data: pd.DataFrame):
+    education_levels: dict = {
         1: 'Below College',
         2: 'College',
         3: 'Bachelor',
         4: 'Master',
         5: 'Doctor'
     }
-    data['Education'] = data['Education'].replace(education_dict)
+    data['Education'] = data['Education'].replace(education_levels)
     data['Education'] = pd.Categorical(
         data['Education'],
         ordered=True,
-        categories=[education_dict[i] for i in sorted(education_dict.keys())]
+        categories=[
+            education_levels[i] for i in sorted(education_levels.keys())
+        ]
     )
     data.sort_values(by='Education', inplace=True)
-    edu_attrition_counts = data.groupby(
+    education_level_attrition_counts = data.groupby(
         ['Education', 'Attrition']
     ).size().unstack()
-    edu_attrition_counts.plot(
+    education_level_attrition_counts.plot(
         kind='bar', stacked=True, color=['#4c78a8', '#f58518']
     )
-    plt.xlabel('Education Level', fontsize=16)
-    plt.ylabel('Count', fontsize=16)
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
+    f
+    plt.xlabel('Education Level', fontsize=FONT_SIZE)
+    plt.ylabel('Count', fontsize=FONT_SIZE)
+    plt.xticks(fontsize=FONT_SIZE)
+    plt.yticks(fontsize=FONT_SIZE)
     plt.title('Employee Attrition by Educational Level')
     plt.xticks(rotation=0)
-    plt.legend(fontsize=16)
+    plt.legend(fontsize=FONT_SIZE)
     plt.show()
 
 
