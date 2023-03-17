@@ -23,7 +23,7 @@ def create_hist_age_distribution(data):
     plt.show()
 
 
-def create_violinplot(data):
+def create_violinplot(data: pd.DataFrame):
     sns.violinplot(
         x='Attrition',
         y='YearsAtCompany',
@@ -40,8 +40,8 @@ def create_violinplot(data):
     plt.show()
 
 
-def create_stacked_bar_average_years(data):
-    attrition_means = data.groupby('Attrition')[
+def create_stacked_bar_average_years(data: pd.DataFrame):
+    attrition_means: pd.DataFrame = data.groupby('Attrition')[
         ['YearsAtCompany', 'TotalWorkingYears', 'YearsSinceLastPromotion']
     ].mean()
     plt.bar(attrition_means.columns, attrition_means.loc['No'], label='No')
