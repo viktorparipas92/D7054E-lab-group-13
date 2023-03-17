@@ -75,6 +75,28 @@ def create_bar_overtime(data: pd.DataFrame):
 
 
 def create_pie_charts(data):
+    def _create_pie_chart(dataset, label):
+        dataset = dataset.copy()
+        dataset.loc[:, 'JobSatisfaction'] = dataset['JobSatisfaction'].replace(
+            job_satisfaction_levels
+        )
+        job_satisfaction_value_counts = dataset[
+            'JobSatisfaction'
+        ].value_counts()
+        plt.pie(
+            job_satisfaction_value_counts,
+            labels=job_satisfaction_value_counts.index,
+            colors=[
+                job_satisfaction_colors[job_satisfaction_level]
+                for job_satisfaction_level in
+                job_satisfaction_value_counts.index
+            ],
+            autopct='%1.1f%%',
+            textprops={'fontsize': FONT_SIZE},
+        )
+        plt.title(f'{label}: Job Satisfaction')
+        plt.show()
+
     attrition_yes: pd.DataFrame = data[data['Attrition'] == 'Yes']
     attrition_no: pd.DataFrame = data[data['Attrition'] == 'No']
     job_satisfaction_levels: dict = {
@@ -93,44 +115,8 @@ def create_pie_charts(data):
     data['JobSatisfaction'] = data['JobSatisfaction'].replace(
         job_satisfaction_levels
     )
-    attrition_yes = attrition_yes.copy()
-    attrition_yes.loc[:, 'JobSatisfaction'] = attrition_yes[
-        'JobSatisfaction'
-    ].replace(job_satisfaction_levels)
-    attrition_yes_job_satisfaction = attrition_yes[
-        'JobSatisfaction'
-    ].value_counts()
-    plt.pie(
-        attrition_yes_job_satisfaction,
-        labels=attrition_yes_job_satisfaction.index,
-        colors=[
-            job_satisfaction_colors[job_satisfaction_level]
-            for job_satisfaction_level in attrition_yes_job_satisfaction.index
-        ],
-        autopct='%1.1f%%',
-        textprops={'fontsize': FONT_SIZE},
-    )
-    plt.title('Attrition Yes: Job Satisfaction')
-    plt.show()
-
-    attrition_no = attrition_no.copy()
-    attrition_no.loc[:, 'JobSatisfaction'] = attrition_no[
-        'JobSatisfaction'
-    ].replace(job_satisfaction_levels)
-    attrition_no_job_satisfaction = attrition_no[
-        'JobSatisfaction'
-    ].value_counts()
-    plt.pie(
-        attrition_no_job_satisfaction,
-        labels=attrition_no_job_satisfaction.index,
-        colors=[
-            job_satisfaction_colors[x]
-            for x in attrition_no_job_satisfaction.index
-        ],
-        autopct='%1.1f%%',
-        textprops={'fontsize': FONT_SIZE})
-    plt.title('Attrition No: Job Satisfaction')
-    plt.show()
+    _create_pie_chart(attrition_yes, label='Attrition Yes')
+    _create_pie_chart(attrition_no, label='Attrition No')
 
 
 def create_bar_education_level(data: pd.DataFrame):
