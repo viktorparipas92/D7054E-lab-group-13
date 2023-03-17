@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-
 FONT_SIZE = 16
 
 
@@ -82,7 +81,9 @@ def create_pie_charts(data):
         )
         job_satisfaction_value_counts = dataset[
             'JobSatisfaction'
-        ].value_counts()
+        ].value_counts().reindex(
+            list(job_satisfaction_levels.values()), copy=False
+        )
         plt.pie(
             job_satisfaction_value_counts,
             labels=job_satisfaction_value_counts.index,
