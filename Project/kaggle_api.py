@@ -1,6 +1,8 @@
 import json
+from io import StringIO
 from typing import Union, Dict, Optional
 
+import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
 
@@ -19,7 +21,7 @@ class KaggleAPI:
     ):
         self._username = username
         self._api_token = api_token
-        self._root = root
+        self.root = root
 
     def get(self, url, as_dict=True) -> Union[Dict, str]:
         response = self._get(url)
@@ -40,8 +42,27 @@ class KaggleAPI:
             return response
 
 
-def get_file_download_url(dataset_owner, dataset_name, filename):
-    return (
-        f"{KAGGLE_API_ROOT}datasets/download/"
-        f"{dataset_owner}/{dataset_name}/{filename}"
-    )
+class KaggleDataset:
+    def __init__(self, api: KaggleAPI, owner: str, name: str):
+        self._api = api
+        self.dataset_list_url = f"{self._api.root}datasets/list/{owner}/{name}"
+        self._owner = owner
+        self._name = name
+        self._datasets = {}
+
+    def fetch_datasets(self) -> dict:
+        datasets = self._api.get(self.dataset_list_url)
+        self._datasets = datasets
+        return self._datasets
+
+    def download(self, filename: str) -> pd.DataFrame:
+        download_url = self._build_file_download_url(filename)
+        data: str = self._api.get(download_url, as_dict=False)
+        dataset: pd.DataFrame = pd.read_csv(StringIO(data))
+        return dataset
+
+    def _build_file_download_url(self, filename):
+        return (
+            f"{self._api.root}datasets/download/"
+            f"{self._owner}/{self._name}/{filename}"
+        )
