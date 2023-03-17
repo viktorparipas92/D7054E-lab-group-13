@@ -142,9 +142,7 @@ def create_bar_education_level(data: pd.DataFrame):
     data['Education'] = pd.Categorical(
         data['Education'],
         ordered=True,
-        categories=[
-            education_levels[i] for i in sorted(education_levels.keys())
-        ]
+        categories=list(education_levels.values())
     )
     data.sort_values(by='Education', inplace=True)
     education_level_attrition_counts = data.groupby(
@@ -153,7 +151,6 @@ def create_bar_education_level(data: pd.DataFrame):
     education_level_attrition_counts.plot(
         kind='bar', stacked=True, color=['#4c78a8', '#f58518']
     )
-    f
     plt.xlabel('Education Level', fontsize=FONT_SIZE)
     plt.ylabel('Count', fontsize=FONT_SIZE)
     plt.xticks(fontsize=FONT_SIZE)
