@@ -7,8 +7,8 @@ FONT_SIZE = 16
 
 
 def create_hist_age_distribution(data):
-    attrition_yes = data[data['Attrition'] == 'Yes']['Age']
-    attrition_no = data[data['Attrition'] == 'No']['Age']
+    attrition_yes: pd.DataFrame = data[data['Attrition'] == 'Yes']['Age']
+    attrition_no: pd.DataFrame = data[data['Attrition'] == 'No']['Age']
     plt.hist(
         [attrition_yes, attrition_no],
         bins=30,
@@ -61,9 +61,11 @@ def create_stacked_bar_average_years(data):
     plt.show()
 
 
-def create_bar_overtime(data):
-    crosstab_df = pd.crosstab(data['Attrition'], data['OverTime'])
-    crosstab_df.plot.bar(stacked=True)
+def create_bar_overtime(data: pd.DataFrame):
+    crosstab_data: pd.DataFrame = pd.crosstab(
+        data['Attrition'], data['OverTime']
+    )
+    crosstab_data.plot.bar(stacked=True)
     plt.title('Attrition by Overtime', fontsize=FONT_SIZE)
     plt.xlabel('Attrition', fontsize=FONT_SIZE)
     plt.ylabel('Employee Count', fontsize=FONT_SIZE)
@@ -73,9 +75,9 @@ def create_bar_overtime(data):
 
 
 def create_pie_charts(data):
-    attrition_yes_df = data[data['Attrition'] == 'Yes']
-    attrition_no_df = data[data['Attrition'] == 'No']
-    job_satisfaction_dict = {
+    attrition_yes: pd.DataFrame = data[data['Attrition'] == 'Yes']
+    attrition_no: pd.DataFrame = data[data['Attrition'] == 'No']
+    job_satisfaction_levels: dict = {
         1: 'Low',
         2: 'Medium',
         3: 'High',
@@ -89,32 +91,33 @@ def create_pie_charts(data):
     }
 
     data['JobSatisfaction'] = data['JobSatisfaction'].replace(
-        job_satisfaction_dict
+        job_satisfaction_levels
     )
-    attrition_yes_df = attrition_yes_df.copy()
-    attrition_yes_df.loc[:, 'JobSatisfaction'] = attrition_yes_df[
+    attrition_yes = attrition_yes.copy()
+    attrition_yes.loc[:, 'JobSatisfaction'] = attrition_yes[
         'JobSatisfaction'
-    ].replace(job_satisfaction_dict)
-    attrition_no_df = attrition_no_df.copy()
-    attrition_no_df.loc[:, 'JobSatisfaction'] = attrition_no_df[
-        'JobSatisfaction'
-    ].replace(job_satisfaction_dict)
-    attrition_yes_job_satisfaction = attrition_yes_df[
+    ].replace(job_satisfaction_levels)
+    attrition_yes_job_satisfaction = attrition_yes[
         'JobSatisfaction'
     ].value_counts()
     plt.pie(
         attrition_yes_job_satisfaction,
         labels=attrition_yes_job_satisfaction.index,
         colors=[
-            job_satisfaction_colors[x]
-            for x in attrition_yes_job_satisfaction.index
+            job_satisfaction_colors[job_satisfaction_level]
+            for job_satisfaction_level in attrition_yes_job_satisfaction.index
         ],
         autopct='%1.1f%%',
         textprops={'fontsize': FONT_SIZE},
     )
     plt.title('Attrition Yes: Job Satisfaction')
     plt.show()
-    attrition_no_job_satisfaction = attrition_no_df[
+
+    attrition_no = attrition_no.copy()
+    attrition_no.loc[:, 'JobSatisfaction'] = attrition_no[
+        'JobSatisfaction'
+    ].replace(job_satisfaction_levels)
+    attrition_no_job_satisfaction = attrition_no[
         'JobSatisfaction'
     ].value_counts()
     plt.pie(
@@ -161,7 +164,7 @@ def create_bar_education_level(data: pd.DataFrame):
     plt.show()
 
 
-def create_plot_business_travel(data):
+def create_plot_business_travel(data: pd.DataFrame):
     sns.set(font_scale=1.5)
     sns.countplot(
         x='BusinessTravel',
