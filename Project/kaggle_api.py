@@ -1,6 +1,13 @@
 import json
+from typing import Union, Dict
+
 import requests
 from requests.auth import HTTPBasicAuth
+
+
+KAGGLE_API_ROOT = 'https://www.kaggle.com/api/v1/'
+KAGGLE_USERNAME = 'viktorparipas'
+KAGGLE_API_TOKEN = '7669a17cf215d73573d5e99c9b5334ae'
 
 
 def get(url, user=None, password=None):
@@ -15,23 +22,17 @@ def get(url, user=None, password=None):
         return response
 
 
-def get_as_dict(url, user=None, password=None):
+def get_as_dict(url, user=None, password=None) -> dict:
     response = get(url, user, password)
     return json.loads(response.text)
 
 
-def get_raw_text(url, user=None, password=None):
+def get_raw_text(url, user=None, password=None) -> str:
     response = get(url, user, password)
     return response.text
 
 
-KAGGLE_API_ROOT = 'https://www.kaggle.com/api/v1/'
-
-KAGGLE_USERNAME = 'viktorparipas'
-KAGGLE_API_TOKEN = '7669a17cf215d73573d5e99c9b5334ae'
-
-
-def get_from_kaggle_api(url, as_dict=True):
+def get_from_kaggle_api(url: str, as_dict=True) -> Union[Dict, str]:
     kwargs = dict(user=KAGGLE_USERNAME, password=KAGGLE_API_TOKEN)
     if as_dict:
         return get_as_dict(url, **kwargs)
