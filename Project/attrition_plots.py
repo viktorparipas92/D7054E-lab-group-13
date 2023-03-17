@@ -2,7 +2,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-FONT_SIZE = 16
+FONT_SIZE_LARGE = 16
+FONT_SIZE_MEDIUM = 14
+FONT_SIZE_SMALL = 12
+FONT_SIZE = FONT_SIZE_SMALL
 
 
 def create_hist_age_distribution(data):
@@ -14,15 +17,15 @@ def create_hist_age_distribution(data):
         color=['red', 'blue'],
         label=['Attrition: Yes', 'Attrition: No'],
     )
-    plt.xlabel('Age', fontsize=FONT_SIZE)
+    plt.xlabel('Age [years]', fontsize=FONT_SIZE)
     plt.ylabel('Count', fontsize=FONT_SIZE)
     plt.xticks(fontsize=FONT_SIZE)
     plt.yticks(fontsize=FONT_SIZE)
     plt.title('Age Distribution by Attrition Status')
-    plt.legend()
+    plt.legend(fontsize=FONT_SIZE)
 
 
-def create_violinplot(data: pd.DataFrame):
+def create_violin_plot(data: pd.DataFrame):
     sns.violinplot(
         x='Attrition',
         y='YearsAtCompany',
@@ -59,41 +62,26 @@ def create_stacked_bar_average_years(data: pd.DataFrame):
 
 def create_bar_overtime(data: pd.DataFrame):
     crosstab_data: pd.DataFrame = pd.crosstab(
-        data['Attrition'], data['OverTime']
+        data['OverTime'], data['Attrition'],
     )
     crosstab_data.plot.bar(stacked=True)
     plt.title('Attrition by Overtime', fontsize=FONT_SIZE)
-    plt.xlabel('Attrition', fontsize=FONT_SIZE)
     plt.ylabel('Employee Count', fontsize=FONT_SIZE)
     plt.legend(fontsize=FONT_SIZE)
     plt.xticks(rotation=0, fontsize=FONT_SIZE)
 
 
-def create_pie_charts(data):
-    def _create_pie_chart(dataset, label):
-        dataset = dataset.copy()
-        dataset.loc[:, 'JobSatisfaction'] = dataset['JobSatisfaction'].replace(
-            job_satisfaction_levels
-        )
-        job_satisfaction_value_counts = dataset[
-            'JobSatisfaction'
-        ].value_counts().reindex(
-            list(job_satisfaction_levels.values()), copy=False
-        )
-        plt.pie(
-            job_satisfaction_value_counts,
-            labels=job_satisfaction_value_counts.index,
-            colors=[
-                job_satisfaction_colors[job_satisfaction_level]
-                for job_satisfaction_level in
-                job_satisfaction_value_counts.index
-            ],
-            autopct='%1.1f%%',
-            textprops={'fontsize': FONT_SIZE},
-        )
-        plt.title(f'{label}: Job Satisfaction')
-        plt.show()
+def create_pie_chart_yes(data):
+    attrition_yes, _, jsl = _split_dataset(data)
+    _create_pie_chart(attrition_yes, jsl, label='Attrition Yes')
 
+
+def create_pie_chart_no(data):
+    _, attrition_no, jsl = _split_dataset(data)
+    _create_pie_chart(attrition_no, jsl, label='Attrition No')
+
+
+def _split_dataset(data):
     attrition_yes: pd.DataFrame = data[data['Attrition'] == 'Yes']
     attrition_no: pd.DataFrame = data[data['Attrition'] == 'No']
     job_satisfaction_levels: dict = {
@@ -102,6 +90,14 @@ def create_pie_charts(data):
         3: 'High',
         4: 'Very High'
     }
+
+    data['JobSatisfaction'] = data['JobSatisfaction'].replace(
+        job_satisfaction_levels
+    )
+    return attrition_yes, attrition_no, job_satisfaction_levels
+
+
+def _create_pie_chart(dataset, job_satisfaction_levels, label):
     job_satisfaction_colors = {
         'Low': 'red',
         'Medium': 'orange',
@@ -109,11 +105,27 @@ def create_pie_charts(data):
         'Very High': 'green'
     }
 
-    data['JobSatisfaction'] = data['JobSatisfaction'].replace(
+    dataset = dataset.copy()
+    dataset.loc[:, 'JobSatisfaction'] = dataset['JobSatisfaction'].replace(
         job_satisfaction_levels
     )
-    _create_pie_chart(attrition_yes, label='Attrition Yes')
-    _create_pie_chart(attrition_no, label='Attrition No')
+    job_satisfaction_value_counts = dataset[
+        'JobSatisfaction'
+    ].value_counts().reindex(
+        list(job_satisfaction_levels.values()), copy=False
+    )
+    plt.pie(
+        job_satisfaction_value_counts,
+        labels=job_satisfaction_value_counts.index,
+        colors=[
+            job_satisfaction_colors[job_satisfaction_level]
+            for job_satisfaction_level in
+            job_satisfaction_value_counts.index
+        ],
+        autopct='%1.1f%%',
+        textprops={'fontsize': FONT_SIZE},
+    )
+    plt.title(f'{label}: Job Satisfaction')
 
 
 def create_bar_education_level(data: pd.DataFrame):
@@ -147,7 +159,6 @@ def create_bar_education_level(data: pd.DataFrame):
 
 
 def create_plot_business_travel(data: pd.DataFrame):
-    sns.set(font_scale=1.5)
     sns.countplot(
         x='BusinessTravel',
         palette='Set2',

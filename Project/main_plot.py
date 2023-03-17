@@ -1,32 +1,46 @@
 import importlib
 import os
-from typing import List
+from typing import List, Callable
 
 import pandas as pd
 from matplotlib import pyplot as plt
 
 from attrition_api import fetch_data
+from attrition_plots import (
+    create_hist_age_distribution,
+    create_violin_plot,
+    create_bar_overtime,
+    create_pie_chart_yes,
+    create_pie_chart_no,
+    create_bar_education_level,
+    create_plot_business_travel,
+)
 
 
-def generate_visualizations(functions: List[str], data: pd.DataFrame):
-    for function_name in functions:
-        function = getattr(attrition_plots, function_name)
+PLOT_FUNCTIONS = [
+    create_hist_age_distribution,
+    create_violin_plot,
+    create_bar_overtime,
+    create_pie_chart_yes,
+    create_pie_chart_no,
+    create_bar_education_level,
+    create_plot_business_travel,
+]
+
+
+def generate_visualizations(functions: List[Callable], data: pd.DataFrame):
+    for function in functions:
         function(data)
-        filename = function_name.lstrip('create_').replace('_', '-')
-        if os.path.isfile(filename):
-            os.remove(filename)
+        filename = function.__name__.lstrip('create_').replace('_', '-')
+        path = f'images/{filename}'
+        if os.path.isfile(path):
+            os.remove(path)
 
-        plt.savefig(f'images/{filename}')
+        plt.savefig(path)
+        plt.show()
 
 
 if __name__ == '__main__':
-    attrition_plots = importlib.import_module('attrition_plots')
-    all_functions = [
-        func for func in dir(attrition_plots)
-        if callable(getattr(attrition_plots, func))
-        and not func.startswith('__')
-    ]
-
     attrition_df = fetch_data()
 
-    generate_visualizations(all_functions, attrition_df)
+    generate_visualizations(PLOT_FUNCTIONS, attrition_df)
