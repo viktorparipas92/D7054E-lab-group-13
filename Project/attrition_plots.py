@@ -20,7 +20,6 @@ def create_hist_age_distribution(data):
     plt.yticks(fontsize=FONT_SIZE)
     plt.title('Age Distribution by Attrition Status')
     plt.legend()
-    plt.show()
 
 
 def create_violinplot(data: pd.DataFrame):
@@ -37,7 +36,6 @@ def create_violinplot(data: pd.DataFrame):
     plt.yticks(fontsize=FONT_SIZE)
     plt.xticks(fontsize=FONT_SIZE)
     plt.yticks(fontsize=FONT_SIZE)
-    plt.show()
 
 
 def create_stacked_bar_average_years(data: pd.DataFrame):
@@ -57,7 +55,6 @@ def create_stacked_bar_average_years(data: pd.DataFrame):
     plt.legend(fontsize=FONT_SIZE)
     plt.xticks(fontsize=FONT_SIZE)
     plt.yticks(fontsize=FONT_SIZE)
-    plt.show()
 
 
 def create_bar_overtime(data: pd.DataFrame):
@@ -70,7 +67,6 @@ def create_bar_overtime(data: pd.DataFrame):
     plt.ylabel('Employee Count', fontsize=FONT_SIZE)
     plt.legend(fontsize=FONT_SIZE)
     plt.xticks(rotation=0, fontsize=FONT_SIZE)
-    plt.show()
 
 
 def create_pie_charts(data):
@@ -148,7 +144,6 @@ def create_bar_education_level(data: pd.DataFrame):
     plt.title('Employee Attrition by Educational Level')
     plt.xticks(rotation=0)
     plt.legend(fontsize=FONT_SIZE)
-    plt.show()
 
 
 def create_plot_business_travel(data: pd.DataFrame):
@@ -160,4 +155,3 @@ def create_plot_business_travel(data: pd.DataFrame):
         data=data,
         order=['Non-Travel', 'Travel_Rarely', 'Travel_Frequently']
     )
-    plt.show()
