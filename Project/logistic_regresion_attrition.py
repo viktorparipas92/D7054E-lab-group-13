@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+from sklearn.metrics import classification_report
 
 from attrition_api import fetch_data
 
@@ -8,22 +9,31 @@ from sklearn.model_selection import train_test_split
 
 
 COLUMNS = [
-    'Age', 'DistanceFromHome', 'MonthlyIncome', 'NumCompaniesWorked',
-    'PercentSalaryHike', 'TotalWorkingYears', 'TrainingTimesLastYear',
-    'YearsAtCompany', 'YearsSinceLastPromotion', 'YearsWithCurrManager',
+    'Age',
+    'DistanceFromHome',
+    'MonthlyIncome',
+    'NumCompaniesWorked',
+    'PercentSalaryHike',
+    'TotalWorkingYears',
+    'TrainingTimesLastYear',
+    'YearsAtCompany',
+    'YearsSinceLastPromotion',
+    'YearsWithCurrManager',
     'BusinessTravel_Non-Travel', 'BusinessTravel_Travel_Frequently',
-    'BusinessTravel_Travel_Rarely', 'Department_Human Resources',
-    'Department_Research & Development', 'Department_Sales',
+    'BusinessTravel_Travel_Rarely',
+    'Department_Human Resources', 'Department_Research & Development',
+    'Department_Sales',
     'EducationField_Human Resources', 'EducationField_Life Sciences',
     'EducationField_Marketing', 'EducationField_Medical',
     'EducationField_Other', 'EducationField_Technical Degree',
-    'Gender_Female', 'Gender_Male', 'JobRole_Healthcare Representative',
-    'JobRole_Human Resources', 'JobRole_Laboratory Technician',
-    'JobRole_Manager', 'JobRole_Manufacturing Director',
-    'JobRole_Research Director', 'JobRole_Research Scientist',
-    'JobRole_Sales Executive', 'JobRole_Sales Representative',
-    'MaritalStatus_Divorced', 'MaritalStatus_Married',
-    'MaritalStatus_Single', 'OverTime_No', 'OverTime_Yes',
+    'Gender_Female', 'Gender_Male',
+    'JobRole_Healthcare Representative', 'JobRole_Human Resources',
+    'JobRole_Laboratory Technician', 'JobRole_Manager',
+    'JobRole_Manufacturing Director',  'JobRole_Research Director',
+    'JobRole_Research Scientist', 'JobRole_Sales Executive',
+    'JobRole_Sales Representative',
+    'MaritalStatus_Divorced', 'MaritalStatus_Married', 'MaritalStatus_Single',
+    'OverTime_No', 'OverTime_Yes',
 ]
 
 
@@ -73,6 +83,8 @@ def train_logistic_regression(df, columns=None):
     y_predicted = logistic_regression.predict(x_test)
 
     accuracy = logistic_regression.score(x_test, y_test)
+    cr = classification_report(y_test, y_predicted)
+    print(cr)
 
     coefficient_dataframe = get_coefficient_dataframe(logistic_regression)
 
