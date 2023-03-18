@@ -1,3 +1,4 @@
+from imblearn.over_sampling import SMOTE
 from matplotlib import pyplot as plt
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
@@ -21,10 +22,17 @@ def get_coefficient_dataframe(model, features):
 
 def train_logistic_regression(df):
     x, y = preprocess_attrition_data(df)
+
+    # Oversample the minority class
+    smote = SMOTE()
+    x, y = smote.fit_resample(x, y)
+
     x_train, x_test, y_train, y_test = train_test_split(
-        x, y, test_size=0.1, random_state=23
+        x, y, test_size=0.2, random_state=23
     )
-    logistic_regression = LogisticRegression(solver='lbfgs', max_iter=4500)
+    logistic_regression = LogisticRegression(
+        solver='lbfgs', max_iter=4500, class_weight='balanced'
+    )
     logistic_regression.fit(x_train, y_train)
     y_predicted = logistic_regression.predict(x_test)
 
@@ -40,6 +48,7 @@ def train_logistic_regression(df):
 def create_plot_coefficients(coef_df):
     plt.xlabel('Coefficient Value')
     plt.ylabel('Feature')
+    plt.yticks([])
     plt.title('Logistic Regression Coefficients')
 
     colors = ['green' if c > 0 else 'red' for c in coef_df['coefficient']]
