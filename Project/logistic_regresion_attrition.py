@@ -1,3 +1,5 @@
+from matplotlib import pyplot as plt
+
 from attrition_api import fetch_data
 
 import pandas as pd
@@ -77,6 +79,16 @@ def train_logistic_regression(df, columns=None):
     return logistic_regression, y_predicted, accuracy, coefficient_dataframe
 
 
+def create_plot_coefficients(coef_df):
+    plt.xlabel('Coefficient Value')
+    plt.ylabel('Feature')
+    plt.title('Logistic Regression Coefficients')
+
+    colors = ['green' if c > 0 else 'red' for c in coef_df['coefficient']]
+    plt.barh(coef_df['feature'], coef_df['coefficient'], color=colors)
+    plt.show()
+
+
 if __name__ == '__main__':
     attrition_dataset = fetch_data()
 
@@ -90,5 +102,4 @@ if __name__ == '__main__':
     print('Accuracy:', accuracy)
     print(coefficient_dataframe)
 
-    from attrition_plots import create_plot_coeff
-    create_plot_coeff(coefficient_dataframe)
+    create_plot_coefficients(coefficient_dataframe)
