@@ -5,13 +5,13 @@ from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 
 from attrition_api import fetch_data
-from dataset import COLUMNS, preprocess_attrition_data
+from dataset import preprocess_attrition_data
 
 
-def get_coefficient_dataframe(model):
+def get_coefficient_dataframe(model, features):
     coefficients = model.coef_[0]
     coefficient_df = pd.DataFrame(
-        {'feature': COLUMNS, 'coefficient': coefficients}
+        {'feature': features.columns.tolist(), 'coefficient': coefficients}
     )
     coefficient_df = coefficient_df.sort_values(
         by='coefficient', ascending=False
@@ -19,13 +19,12 @@ def get_coefficient_dataframe(model):
     return coefficient_df
 
 
-def train_logistic_regression(df, columns=None):
-    columns = columns or COLUMNS
-    x, y = preprocess_attrition_data(df, columns)
+def train_logistic_regression(df):
+    x, y = preprocess_attrition_data(df)
     x_train, x_test, y_train, y_test = train_test_split(
         x, y, test_size=0.1, random_state=23
     )
-    logistic_regression = LogisticRegression(solver='lbfgs', max_iter=2500)
+    logistic_regression = LogisticRegression(solver='lbfgs', max_iter=4500)
     logistic_regression.fit(x_train, y_train)
     y_predicted = logistic_regression.predict(x_test)
 
@@ -33,7 +32,7 @@ def train_logistic_regression(df, columns=None):
     cr = classification_report(y_test, y_predicted)
     print(cr)
 
-    coefficient_dataframe = get_coefficient_dataframe(logistic_regression)
+    coefficient_dataframe = get_coefficient_dataframe(logistic_regression, x)
 
     return logistic_regression, y_predicted, accuracy, coefficient_dataframe
 

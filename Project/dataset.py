@@ -1,39 +1,15 @@
 import pandas as pd
 
 
-COLUMNS = [
-    'Age',
-    'DistanceFromHome',
-    'MonthlyIncome',
-    'NumCompaniesWorked',
-    'PercentSalaryHike',
-    'TotalWorkingYears',
-    'TrainingTimesLastYear',
-    'YearsAtCompany',
-    'YearsSinceLastPromotion',
-    'YearsWithCurrManager',
-    'BusinessTravel_Non-Travel', 'BusinessTravel_Travel_Frequently',
-    'BusinessTravel_Travel_Rarely',
-    'Department_Human Resources', 'Department_Research & Development',
-    'Department_Sales',
-    'EducationField_Human Resources', 'EducationField_Life Sciences',
-    'EducationField_Marketing', 'EducationField_Medical',
-    'EducationField_Other', 'EducationField_Technical Degree',
-    'Gender_Female', 'Gender_Male',
-    'JobRole_Healthcare Representative', 'JobRole_Human Resources',
-    'JobRole_Laboratory Technician', 'JobRole_Manager',
-    'JobRole_Manufacturing Director',  'JobRole_Research Director',
-    'JobRole_Research Scientist', 'JobRole_Sales Executive',
-    'JobRole_Sales Representative',
-    'MaritalStatus_Divorced', 'MaritalStatus_Married', 'MaritalStatus_Single',
-    'OverTime_No', 'OverTime_Yes',
-    'JobSatisfaction',
-    'Education'
+FEATURES_TO_REMOVE = [
+    'EmployeeNumber',
+    'EmployeeCount',
+    'Over18',
+    'StandardHours',
 ]
 
 
-def preprocess_attrition_data(dataset, columns=None):
-    columns = columns or COLUMNS
+def preprocess_attrition_data(dataset):
     # Convert Attrition column to binary 0/1
     dataset['Attrition'] = (dataset['Attrition'] == 'Yes').astype(int)
 
@@ -51,6 +27,8 @@ def preprocess_attrition_data(dataset, columns=None):
         dataset = dataset.join(cat_list)
 
     # Create a list of independent variables ignoring some
-    features = dataset[columns]
     labels = dataset['Attrition']
+    dataset.drop(FEATURES_TO_REMOVE, axis=1, inplace=True)
+    dataset.drop(categorical_variables, axis=1, inplace=True)
+    features = dataset.drop('Attrition', axis=1)
     return features, labels
