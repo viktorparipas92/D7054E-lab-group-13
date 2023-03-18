@@ -27,6 +27,8 @@ COLUMNS = [
     'JobRole_Sales Representative',
     'MaritalStatus_Divorced', 'MaritalStatus_Married', 'MaritalStatus_Single',
     'OverTime_No', 'OverTime_Yes',
+    'JobSatisfaction',
+    'Education'
 ]
 
 
