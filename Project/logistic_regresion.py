@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 
 from attrition_api import fetch_data
 from dataset import COLUMNS, preprocess_attrition_data
+from imblearn.over_sampling import SMOTE
 
 
 def get_coefficient_dataframe(model):
@@ -22,10 +23,14 @@ def get_coefficient_dataframe(model):
 def train_logistic_regression(df, columns=None):
     columns = columns or COLUMNS
     x, y = preprocess_attrition_data(df, columns)
+    # Oversample the minority class
+    smote = SMOTE()
+    x, y = smote.fit_resample(x, y)
     x_train, x_test, y_train, y_test = train_test_split(
-        x, y, test_size=0.1, random_state=23
+        x, y, test_size=0.2
     )
-    logistic_regression = LogisticRegression(solver='lbfgs', max_iter=2500)
+
+    logistic_regression = LogisticRegression(solver='lbfgs', max_iter=4500, class_weight='balanced')
     logistic_regression.fit(x_train, y_train)
     y_predicted = logistic_regression.predict(x_test)
 
